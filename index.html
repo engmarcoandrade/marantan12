@@ -633,7 +633,7 @@ tbody tr:last-child td { border-bottom:none; }
         <path d="M9 35 L15.5 15 L22.5 30 L29.5 15 L36 10.5" fill="none" stroke="var(--accent)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M30.5 9.5 L37.5 9 L36.8 16" fill="none" stroke="var(--accent)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <div class="app-logo">CONTROLE <span>FINANCEIRO</span> <span style="font-size:9px;color:var(--muted);font-weight:600;">v45.8</span></div>
+      <div class="app-logo">CONTROLE <span>FINANCEIRO</span> <span style="font-size:9px;color:var(--muted);font-weight:600;">v45.9</span></div>
     </div>
     <div class="etapa-chip">Etapa <b id="hdr-etapa">#1</b></div>
     <div class="hdr-btns">
@@ -667,6 +667,10 @@ tbody tr:last-child td { border-bottom:none; }
   <button class="nav-item" id="nav-grafico" onclick="openTab('grafico')">
     <span class="nav-icon">📈</span>
     <span class="nav-label">Gráfico</span>
+  </button>
+  <button class="nav-item" id="nav-notas" onclick="openTab('notas')">
+    <span class="nav-icon">📝</span>
+    <span class="nav-label">Notas</span>
   </button>
   <button class="nav-item" id="nav-historico" onclick="openTab('historico')">
     <span class="nav-icon">📜</span>
@@ -968,6 +972,10 @@ tbody tr:last-child td { border-bottom:none; }
         <label class="switch"><input type="checkbox" id="cfg-mostrar-grafico" onchange="toggleAbaVisivel('grafico',this.checked)"><span class="slider"></span></label>
       </div>
       <div class="lock-row">
+        <span class="lock-label">📝 Mostrar aba Notas</span>
+        <label class="switch"><input type="checkbox" id="cfg-mostrar-notas" onchange="toggleAbaVisivel('notas',this.checked)"><span class="slider"></span></label>
+      </div>
+      <div class="lock-row">
         <span class="lock-label">📊 Mostrar aba Histórico</span>
         <label class="switch"><input type="checkbox" id="cfg-mostrar-historico" onchange="toggleAbaVisivel('historico',this.checked)"><span class="slider"></span></label>
       </div>
@@ -998,6 +1006,33 @@ tbody tr:last-child td { border-bottom:none; }
       </div>
       <canvas id="meuGrafico" height="220"></canvas>
     </div>
+  </div>
+
+  <!-- ABA: NOTAS -->
+  <div id="notas" class="tab-content">
+
+    <div class="progress-card" style="margin-bottom:10px;">
+      <div class="progress-header">
+        <span>📝 Nova anotação</span>
+        <b id="notas-contagem">0 anotações</b>
+      </div>
+      <textarea id="nota-nova-txt" placeholder="Escreva aqui o que observou: padrão de alternância, decisão tomada, ajuste de parâmetro, o que deu certo ou errado..." oninput="atualizarContadorNotaNova()" style="width:100%; min-height:96px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-family:var(--sans); font-size:13px; line-height:1.55; padding:10px; resize:vertical; outline:none; margin-top:8px;"></textarea>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:6px;">
+        <span id="nota-nova-contador" style="font-size:10px; color:var(--muted);">0 caracteres</span>
+        <div style="display:flex; gap:6px;">
+          <button onclick="limparNotaNova()" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:7px 12px; border-radius:var(--radius-sm); font-size:12px; font-weight:600; cursor:pointer; font-family:var(--sans);">Limpar</button>
+          <button onclick="salvarNovaNota()" style="background:var(--accent); border:1px solid var(--accent-border); color:#fff; padding:7px 14px; border-radius:var(--radius-sm); font-size:12px; font-weight:700; cursor:pointer; font-family:var(--sans);">💾 Salvar anotação</button>
+        </div>
+      </div>
+      <p style="font-size:10px; color:var(--muted); line-height:1.5; margin-top:8px;">Cada anotação guarda a data e a hora automaticamente. Elas entram no backup e na sincronização junto com o resto dos dados.</p>
+    </div>
+
+    <div style="display:flex; gap:6px; align-items:center; margin-bottom:10px;">
+      <input type="text" id="notas-busca" placeholder="🔎 Buscar nas anotações..." oninput="renderNotas()" style="flex:1; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-family:var(--sans); font-size:12px; padding:9px 10px; outline:none;">
+      <button id="btn-ordem-notas" onclick="alternarOrdemNotas()" style="background:var(--surface); border:1px solid var(--border); color:var(--text); padding:9px 10px; border-radius:var(--radius-sm); font-size:11px; font-weight:700; cursor:pointer; font-family:var(--sans); white-space:nowrap;">⬇️ Recentes</button>
+    </div>
+
+    <div id="notas-lista"></div>
   </div>
 
   <!-- ABA: HISTÓRICO -->
@@ -1093,7 +1128,8 @@ const DEFAULT_MODO = {
   maxGales:4, stopLotePercent:5.0,
   incrFixoPercent:10.0, gatilhoIncremento:"SEMPRE", vistaOperacao:"cards",
   metaPorLetra:{"A":1.0,"B":1.0,"C":1.0,"D":1.0,"E":1.0,"F":1.0}, metaGlobalPercent:1.0, letrasMetaCumprida:{},
-  estatSequencias:[], streakPorLetra:{}, registroApostas:[], perdasAssumidasTotal:0, assumidasCount:0, stopTravado:false
+  estatSequencias:[], streakPorLetra:{}, registroApostas:[], perdasAssumidasTotal:0, assumidasCount:0, stopTravado:false,
+  notas:[], mostrarNotas:true
 };
 
 const DEFAULT_STATE = Object.assign({}, DEFAULT_MODO, {
@@ -1243,6 +1279,21 @@ function aplicarBlindagemDeVariaveis(){
   if(!m.marantanLancamentosRodada) m.marantanLancamentosRodada={};
   if(!m.oddsPorLetra) m.oddsPorLetra={"A":1.80,"B":1.80,"C":1.80,"D":1.80,"E":1.80,"F":1.80};
   if(!m.anotacoesPorLetra) m.anotacoesPorLetra={"A":"","B":"","C":"","D":"","E":"","F":""};
+  // ── NOTAS: array de anotações datadas ──────────────────────────────
+  if(!Array.isArray(m.notas)) m.notas=[];
+  if(m.mostrarNotas===undefined) m.mostrarNotas=true;
+  // migração única: bloco livre antigo (notasLivres) vira a primeira anotação
+  if(typeof m.notasLivres==='string' && m.notasLivres.trim()!=='' && !m.notasLivresMigrada){
+    m.notas.push({ id:'n'+(m.notasLivresTs||Date.now()), ts:(m.notasLivresTs||Date.now()), tsEdit:0, texto:m.notasLivres, fixada:false });
+    m.notasLivresMigrada=true;
+  }
+  m.notas.forEach(n=>{
+    if(!n.id) n.id='n'+Math.random().toString(36).slice(2,10);
+    if(!n.ts) n.ts=Date.now();
+    if(n.tsEdit===undefined) n.tsEdit=0;
+    if(n.fixada===undefined) n.fixada=false;
+    if(typeof n.texto!=='string') n.texto='';
+  });
   if(!m.letrasBloqueadasRodada) m.letrasBloqueadasRodada={};
   if(!m.modoPosWin) m.modoPosWin="BLINDAR";
   m.modoProgressao="PERCENTUAL"; // único modelo suportado — força mesmo em estados antigos
@@ -1574,6 +1625,7 @@ function openTab(tabId){
   if(tabId==='lotes'&&typeof aplicarOrdemBlocos==='function') aplicarOrdemBlocos();
   if(tabId==='lotes'&&typeof atualizarIndicadorFiltroLotes==='function') atualizarIndicadorFiltroLotes();
   if(tabId==='grafico') renderizarGrafico();
+  if(tabId==='notas'){ notaEditandoId=null; renderNotas(); }
   if(tabId==='config') preencherScriptBox();
 }
 
@@ -1805,17 +1857,22 @@ let notasTimeout=null;
 function aplicarVisibilidadeAbas(){
   const navG=document.getElementById('nav-grafico');
   const navH=document.getElementById('nav-historico');
+  const navN=document.getElementById('nav-notas');
   const showG=ms().mostrarGrafico!==false ? ms().mostrarGrafico : false;
   const showH=ms().mostrarHistorico!==false;
+  const showN=ms().mostrarNotas!==false;
   if(navG) navG.style.display=(ms().mostrarGrafico===true)?'':'none';
   if(navH) navH.style.display=showH?'':'none';
+  if(navN) navN.style.display=showN?'':'none';
   // sincronizar switches na Config
   const cg=document.getElementById('cfg-mostrar-grafico'); if(cg) cg.checked=(ms().mostrarGrafico===true);
   const ch=document.getElementById('cfg-mostrar-historico'); if(ch) ch.checked=showH;
+  const cn=document.getElementById('cfg-mostrar-notas'); if(cn) cn.checked=showN;
 }
 function toggleAbaVisivel(aba,visivel){
   if(aba==='grafico') ms().mostrarGrafico=!!visivel;
   if(aba==='historico') ms().mostrarHistorico=!!visivel;
+  if(aba==='notas') ms().mostrarNotas=!!visivel;
   aplicarVisibilidadeAbas();
   // se a aba ativa acabou de ser ocultada, volta para o Painel
   if(!visivel){
@@ -1836,38 +1893,135 @@ function toggleInfoLotes(){
   // persiste a preferência (sem salvar toda hora — só o flag em memória, salvo no próximo ciclo)
 }
 
-function toggleNotasLivres(){
-  const wrap=document.getElementById('wrap-notas-livres'); if(!wrap) return;
-  const abrir=wrap.style.display==='none';
-  wrap.style.display=abrir?'block':'none';
-  const btn=document.getElementById('btn-toggle-notas');
-  if(btn) btn.innerText=abrir?'📝 Anotações e orientações ▲':'📝 Anotações e orientações';
-  if(abrir){
-    const txt=document.getElementById('txt-notas-livres');
-    if(txt){ txt.value=ms().notasLivres||''; atualizarStatusNotas(); txt.focus(); }
-  }
+/* ════════════════════════════════════════════════════════════════
+   ABA NOTAS — anotações datadas, com busca, fixação e edição.
+   Cada nota: {id, ts, tsEdit, texto, fixada}
+   ════════════════════════════════════════════════════════════════ */
+let ordemNotas='recentes';   // 'recentes' | 'antigas'
+let notaEditandoId=null;
+
+function escNota(s){
+  return String(s==null?'':s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
-function atualizarStatusNotas(){
-  const txt=document.getElementById('txt-notas-livres');
-  const cont=document.getElementById('notas-contador');
-  const st=document.getElementById('notas-status');
-  if(cont&&txt) cont.innerText=(txt.value.length)+' caracteres';
-  if(st){
-    const ts=ms().notasLivresTs||0;
-    st.innerText=ts?('salvo · '+new Date(ts).toLocaleString('pt-BR')):'';
-  }
+function dataNotaLegivel(ts){
+  if(!ts) return '';
+  const d=new Date(ts);
+  return d.toLocaleDateString('pt-BR')+' · '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
-function agendarSalvarNotasLivres(){
-  const txt=document.getElementById('txt-notas-livres'); if(!txt) return;
-  const cont=document.getElementById('notas-contador'); if(cont) cont.innerText=txt.value.length+' caracteres';
-  const st=document.getElementById('notas-status'); if(st) st.innerText='digitando...';
-  if(notasTimeout) clearTimeout(notasTimeout);
-  notasTimeout=setTimeout(()=>{
-    ms().notasLivres=txt.value;
-    ms().notasLivresTs=Date.now();
-    atualizarStatusNotas();
-    salvarDadosEAtualizarTudo();
-  },900);
+function atualizarContadorNotaNova(){
+  const txt=document.getElementById('nota-nova-txt');
+  const c=document.getElementById('nota-nova-contador');
+  if(txt&&c) c.innerText=txt.value.length+' caracteres';
+}
+function limparNotaNova(){
+  const txt=document.getElementById('nota-nova-txt');
+  if(!txt) return;
+  if(txt.value.trim()!=='' && !confirm('Descartar o texto digitado?')) return;
+  txt.value=''; atualizarContadorNotaNova(); txt.focus();
+}
+function salvarNovaNota(){
+  const txt=document.getElementById('nota-nova-txt'); if(!txt) return;
+  const conteudo=txt.value.trim();
+  if(conteudo===''){ alert('Escreva alguma coisa antes de salvar.'); txt.focus(); return; }
+  if(!Array.isArray(ms().notas)) ms().notas=[];
+  ms().notas.push({ id:'n'+Date.now()+Math.random().toString(36).slice(2,6), ts:Date.now(), tsEdit:0, texto:conteudo, fixada:false });
+  txt.value=''; atualizarContadorNotaNova();
+  salvarDadosEAtualizarTudo();
+  renderNotas();
+}
+function alternarOrdemNotas(){
+  ordemNotas=(ordemNotas==='recentes')?'antigas':'recentes';
+  const b=document.getElementById('btn-ordem-notas');
+  if(b) b.innerText=(ordemNotas==='recentes')?'⬇️ Recentes':'⬆️ Antigas';
+  renderNotas();
+}
+function fixarNota(id){
+  const n=(ms().notas||[]).find(x=>x.id===id); if(!n) return;
+  n.fixada=!n.fixada;
+  salvarDadosEAtualizarTudo();
+  renderNotas();
+}
+function excluirNota(id){
+  const n=(ms().notas||[]).find(x=>x.id===id); if(!n) return;
+  const trecho=n.texto.length>60?n.texto.slice(0,60)+'...':n.texto;
+  if(!confirm('Excluir esta anotação?\n\n"'+trecho+'"\n\nEsta ação não pode ser desfeita.')) return;
+  ms().notas=(ms().notas||[]).filter(x=>x.id!==id);
+  if(notaEditandoId===id) notaEditandoId=null;
+  salvarDadosEAtualizarTudo();
+  renderNotas();
+}
+function iniciarEdicaoNota(id){ notaEditandoId=id; renderNotas(); }
+function cancelarEdicaoNota(){ notaEditandoId=null; renderNotas(); }
+function salvarEdicaoNota(id){
+  const ta=document.getElementById('edit-nota-'+id); if(!ta) return;
+  const n=(ms().notas||[]).find(x=>x.id===id); if(!n) return;
+  const novo=ta.value.trim();
+  if(novo===''){ alert('A anotação não pode ficar vazia. Use o botão de excluir se quiser removê-la.'); return; }
+  if(novo!==n.texto){ n.texto=novo; n.tsEdit=Date.now(); }
+  notaEditandoId=null;
+  salvarDadosEAtualizarTudo();
+  renderNotas();
+}
+function renderNotas(){
+  const lista=document.getElementById('notas-lista'); if(!lista) return;
+  const todas=Array.isArray(ms().notas)?ms().notas:[];
+
+  const cont=document.getElementById('notas-contagem');
+  if(cont) cont.innerText=todas.length+(todas.length===1?' anotação':' anotações');
+
+  const buscaEl=document.getElementById('notas-busca');
+  const termo=buscaEl?buscaEl.value.trim().toLowerCase():'';
+  let vis=termo===''?todas.slice():todas.filter(n=>(n.texto||'').toLowerCase().includes(termo));
+
+  // fixadas sempre no topo; dentro de cada grupo, pela ordem escolhida
+  vis.sort((a,b)=>{
+    if(!!a.fixada!==!!b.fixada) return a.fixada?-1:1;
+    return (ordemNotas==='recentes')?(b.ts-a.ts):(a.ts-b.ts);
+  });
+
+  if(vis.length===0){
+    lista.innerHTML='<div class="progress-card" style="text-align:center; padding:22px 14px;">'
+      +'<div style="font-size:26px; margin-bottom:6px;">'+(termo?'🔎':'📝')+'</div>'
+      +'<div style="font-size:12px; color:var(--muted); line-height:1.6;">'
+      +(termo?'Nenhuma anotação contém <b>'+escNota(termo)+'</b>.':'Você ainda não tem anotações.<br>Escreva a primeira no campo acima.')
+      +'</div></div>';
+    return;
+  }
+
+  lista.innerHTML=vis.map(n=>{
+    const emEdicao=(notaEditandoId===n.id);
+    const marcaFixa=n.fixada
+      ? '<span style="font-size:9px; font-weight:800; letter-spacing:.06em; color:var(--accent); border:1px solid var(--accent-border); border-radius:4px; padding:1px 5px;">📌 FIXADA</span>'
+      : '';
+    const editado=n.tsEdit?'<span style="font-size:9px; color:var(--muted);">✏️ editada '+dataNotaLegivel(n.tsEdit)+'</span>':'';
+    const corpo=emEdicao
+      ? '<textarea id="edit-nota-'+n.id+'" style="width:100%; min-height:110px; background:var(--surface2); border:1px solid var(--accent-border); border-radius:var(--radius-sm); color:var(--text); font-family:var(--sans); font-size:13px; line-height:1.55; padding:10px; resize:vertical; outline:none; margin-top:8px;">'+escNota(n.texto)+'</textarea>'
+        +'<div style="display:flex; gap:6px; justify-content:flex-end; margin-top:6px;">'
+        +'<button onclick="cancelarEdicaoNota()" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:6px 11px; border-radius:var(--radius-sm); font-size:11px; font-weight:600; cursor:pointer; font-family:var(--sans);">Cancelar</button>'
+        +'<button onclick="salvarEdicaoNota(\''+n.id+'\')" style="background:var(--accent); border:1px solid var(--accent-border); color:#fff; padding:6px 12px; border-radius:var(--radius-sm); font-size:11px; font-weight:700; cursor:pointer; font-family:var(--sans);">💾 Salvar</button>'
+        +'</div>'
+      : '<div style="white-space:pre-wrap; word-break:break-word; font-size:13px; line-height:1.6; color:var(--text); margin-top:8px; font-family:var(--sans);">'+escNota(n.texto)+'</div>';
+
+    const acoes=emEdicao?'':'<div style="display:flex; gap:5px;">'
+      +'<button title="Fixar no topo" onclick="fixarNota(\''+n.id+'\')" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer;">'+(n.fixada?'📌':'📍')+'</button>'
+      +'<button title="Editar" onclick="iniciarEdicaoNota(\''+n.id+'\')" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer;">✏️</button>'
+      +'<button title="Excluir" onclick="excluirNota(\''+n.id+'\')" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer;">🗑️</button>'
+      +'</div>';
+
+    return '<div class="progress-card" style="margin-bottom:8px; border-left:'+(n.fixada?'3px':'1px')+' solid '+(n.fixada?'var(--accent)':'var(--border)')+';">'
+      +'<div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">'
+      +'<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">'
+      +marcaFixa
+      +'<span style="font-size:10px; color:var(--muted); font-weight:700; font-family:var(--mono);">'+dataNotaLegivel(n.ts)+'</span>'
+      +editado
+      +'</div>'
+      +acoes
+      +'</div>'
+      +corpo
+      +'</div>';
+  }).join('');
 }
 
 // Fator de incremento no Percentual Fixo, conforme a categoria do LOTE (meta, incremento e gatilho por categoria).
