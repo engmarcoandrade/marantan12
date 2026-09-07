@@ -633,7 +633,7 @@ tbody tr:last-child td { border-bottom:none; }
         <path d="M9 35 L15.5 15 L22.5 30 L29.5 15 L36 10.5" fill="none" stroke="var(--accent)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M30.5 9.5 L37.5 9 L36.8 16" fill="none" stroke="var(--accent)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <div class="app-logo">CONTROLE <span>FINANCEIRO</span> <span style="font-size:9px;color:var(--muted);font-weight:600;">v45.9</span></div>
+      <div class="app-logo">CONTROLE <span>FINANCEIRO</span> <span style="font-size:9px;color:var(--muted);font-weight:600;">v45.10</span></div>
     </div>
     <div class="etapa-chip">Etapa <b id="hdr-etapa">#1</b></div>
     <div class="hdr-btns">
@@ -1041,6 +1041,7 @@ tbody tr:last-child td { border-bottom:none; }
     <div class="progress-card" style="margin-bottom:10px;">
       <div class="progress-header">
         <span>🎯 Tenho vantagem, ou tive sorte?</span>
+        <button onclick="resetarDadosWilson()" title="Zerar os dados usados neste painel" style="background:var(--surface2); border:1px solid var(--border); color:var(--muted); padding:5px 10px; border-radius:var(--radius-sm); font-size:10px; font-weight:700; cursor:pointer; font-family:var(--sans); white-space:nowrap;">🗑️ Resetar dados</button>
       </div>
       <p style="font-size:11px;color:var(--text);line-height:1.6;margin:0 0 10px;">
         Nenhuma progressão de aposta transforma expectativa negativa em positiva — ela só muda <b>quando</b> a perda chega.
@@ -1769,6 +1770,26 @@ function ajustarCamposDeOddsMenu(usarState=false){ /* removido: odds agora vêm 
 function salvarDadosEAtualizarTudo(){ state.ultimoTimestampSinc=Date.now(); state.sheetsUrl=state.sheetsUrl||SHEETS_URL_MEMORIA; if(state.sheetsUrl) SHEETS_URL_MEMORIA=state.sheetsUrl; atualizarPainelUI(false); agendarSalvarNuvem(); } // sem localStorage
 function reiniciarBancaTotalSistema(){ if(confirm("⚠️ Resetar o sistema inteiro?")){ state=JSON.parse(JSON.stringify(DEFAULT_STATE)); sinalizadoMeta=false; sinalizadoStop=false; gerarEstruturaLotesIniciais(); } }
 function ajustarBancaAtivaExternamente(){ const v=parseFloat(document.getElementById('cfg-banca-capital').value); if(isNaN(v)||v<=0) return; const parcial=state.bancaAtual-state.bancaInicioEtapa; state.bancaInicial=v; state.bancaInicioEtapa=v; state.bancaAtual=v+parcial; salvarDadosEAtualizarTudo(); }
+// Reseta só os dados que alimentam o painel de vantagem estatística (Wilson) e a tabela de
+// sequências sem vitória. NÃO toca em banca, lotes ativos, config, notas ou histórico de etapas.
+function resetarDadosWilson(){
+  const n=(ms().registroApostas||[]).length;
+  const msg="🗑️ Resetar dados do painel de vantagem (Wilson)?\n\n"
+    +"Serão apagados:\n"
+    +"• "+n+" aposta(s) registrada(s) no painel\n"
+    +"• A tabela de sequências sem vitória e as streaks atuais por letra\n\n"
+    +"NÃO serão afetados: banca, lotes em operação, configurações e anotações.\n\n"
+    +"Essa ação não pode ser desfeita.";
+  if(!confirm(msg)) return;
+  ms().registroApostas=[];
+  ms().estatSequencias=[];
+  ms().streakPorLetra={};
+  histEventoSelecionado='TODOS';
+  salvarDadosEAtualizarTudo();
+  renderPainelVantagem();
+  renderEstatisticas();
+}
+
 function excluirRegistroEtapaHistorico(index){ if(confirm("🗑 Excluir esta etapa do histórico?")){
   const banco=parseFloat(state.bancoCapital)||0;
   ms().historico.splice(index,1); ms().historico.forEach((h,i)=>{ h.etapa=i+1; }); ms().etapaAtual=ms().historico.length+1;
