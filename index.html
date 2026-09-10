@@ -633,7 +633,7 @@ tbody tr:last-child td { border-bottom:none; }
         <path d="M9 35 L15.5 15 L22.5 30 L29.5 15 L36 10.5" fill="none" stroke="var(--accent)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M30.5 9.5 L37.5 9 L36.8 16" fill="none" stroke="var(--accent)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <div class="app-logo">CONTROLE <span>FINANCEIRO</span> <span style="font-size:9px;color:var(--muted);font-weight:600;">v45.11</span></div>
+      <div class="app-logo">CONTROLE <span>FINANCEIRO</span> <span style="font-size:9px;color:var(--muted);font-weight:600;">v45.12</span></div>
     </div>
     <div class="etapa-chip">Etapa <b id="hdr-etapa">#1</b></div>
     <div class="hdr-btns">
@@ -2259,16 +2259,16 @@ function renderEditorMercados(){
   const lista=getMercados();
   // Linha de títulos das colunas — tudo numa fileira só, com rolagem horizontal se necessário
   let html=`<div style="display:flex;gap:16px;align-items:center;margin-bottom:4px;padding:0 2px;overflow-x:auto;-webkit-overflow-scrolling:touch;">
-      <span style="width:72px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;">Código</span>
-      <span style="width:150px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;">Nome</span>
-      <span style="width:68px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;text-align:center;">Fator</span>
-      <span style="width:68px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;text-align:center;">Base%</span>
+      <span style="width:80px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;">Código</span>
+      <span style="width:160px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;">Nome</span>
+      <span style="width:84px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;text-align:center;">Fator</span>
+      <span style="width:84px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;text-align:center;">Base%</span>
       <span style="width:1px;flex:none;"></span>
-      <span style="width:68px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;text-align:center;">Meta%</span>
-      <span style="width:68px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;text-align:center;">Incr.%</span>
+      <span style="width:84px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;text-align:center;">Meta%</span>
+      <span style="width:84px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;text-align:center;">Incr.%</span>
       <span style="width:70px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;text-align:center;">Vitória</span>
       <span style="width:70px;flex:none;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;text-align:center;">Derrota</span>
-      <span style="width:32px;flex:none;"></span>
+      <span style="width:36px;flex:none;"></span>
     </div>`;
   lista.forEach((m,i)=>{
     const vit=(m.incrVitoria!==false), der=(m.incrDerrota!==false);
@@ -2279,11 +2279,11 @@ function renderEditorMercados(){
       <div style="display:flex;gap:16px;align-items:center;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:3px;">
         <input type="text" value="${(m.cod||'').replace(/"/g,'&quot;')}" oninput="editarMercadoCampo(${i},'cod',this.value)" placeholder="V1" style="width:80px;flex:none;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:11px;border-radius:5px;text-transform:uppercase;">
         <input type="text" value="${(m.nome||'').replace(/"/g,'&quot;')}" oninput="editarMercadoCampo(${i},'nome',this.value)" placeholder="Descrição" style="width:160px;flex:none;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:16px;padding:11px;border-radius:5px;">
-        <input type="text" inputmode="decimal" value="${m.odd!==undefined?m.odd:2.00}" oninput="editarMercadoCampo(${i},'odd',this.value)" title="Fator" placeholder="Fator" style="width:84px;flex:none;background:var(--surface2);border:1px solid var(--accent);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:11px;border-radius:5px;">
-        <input type="text" inputmode="decimal" value="${m.basePct!==undefined?m.basePct:1.0}" oninput="editarMercadoCampo(${i},'basePct',this.value)" title="Percentual da primeira aposta" placeholder="Base%" style="width:84px;flex:none;background:var(--surface2);border:1px solid var(--bar-amber);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:11px;border-radius:5px;">
+        <input type="text" inputmode="decimal" value="${m.odd!==undefined?m.odd:2.00}" oninput="digitandoMercadoCampo(${i},'odd',this.value)" onchange="editarMercadoCampo(${i},'odd',this.value)" title="Fator" placeholder="Fator" style="width:84px;flex:none;background:var(--surface2);border:1px solid var(--accent);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:11px;border-radius:5px;">
+        <input type="text" inputmode="decimal" value="${m.basePct!==undefined?m.basePct:1.0}" oninput="digitandoMercadoCampo(${i},'basePct',this.value)" onchange="editarMercadoCampo(${i},'basePct',this.value)" title="Percentual da primeira aposta" placeholder="Base%" style="width:84px;flex:none;background:var(--surface2);border:1px solid var(--bar-amber);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:11px;border-radius:5px;">
         <div style="width:1px;flex:none;align-self:stretch;background:var(--border2);"></div>
-        <input type="text" inputmode="decimal" value="${m.metaPct!==undefined?m.metaPct:1.0}" oninput="editarMercadoCampo(${i},'metaPct',this.value)" title="Meta desta categoria (% de lucro para cumprir a missão)" style="width:84px;flex:none;background:var(--surface2);border:1px solid var(--win);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:11px;border-radius:5px;">
-        <input type="text" inputmode="decimal" value="${m.incrPct!==undefined?m.incrPct:10.0}" oninput="editarMercadoCampo(${i},'incrPct',this.value)" title="Incremento por aporte desta categoria" style="width:84px;flex:none;background:var(--surface2);border:1px solid var(--accent);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:11px;border-radius:5px;">
+        <input type="text" inputmode="decimal" value="${m.metaPct!==undefined?m.metaPct:1.0}" oninput="digitandoMercadoCampo(${i},'metaPct',this.value)" onchange="editarMercadoCampo(${i},'metaPct',this.value)" title="Meta desta categoria (% de lucro para cumprir a missão)" style="width:84px;flex:none;background:var(--surface2);border:1px solid var(--win);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:11px;border-radius:5px;">
+        <input type="text" inputmode="decimal" value="${m.incrPct!==undefined?m.incrPct:10.0}" oninput="digitandoMercadoCampo(${i},'incrPct',this.value)" onchange="editarMercadoCampo(${i},'incrPct',this.value)" title="Incremento por aporte desta categoria" style="width:84px;flex:none;background:var(--surface2);border:1px solid var(--accent);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:11px;border-radius:5px;">
         <label style="width:70px;flex:none;display:flex;align-items:center;justify-content:center;gap:3px;font-size:9px;color:var(--text);cursor:pointer;" title="Incrementa quando ganha">
           <input type="checkbox" ${vit?'checked':''} onchange="editarMercadoCampo(${i},'incrVitoria',this.checked)" style="width:22px;height:22px;cursor:pointer;flex:none;">
         </label>
@@ -2298,13 +2298,13 @@ function renderEditorMercados(){
         </label>
         ${regua?`<div style="display:flex;align-items:center;gap:5px;flex:none;">
           <span style="font-size:10px;color:var(--muted);white-space:nowrap;">Janela</span>
-          <input type="text" inputmode="numeric" value="${m.reguaJanela!==undefined?m.reguaJanela:10}" oninput="editarMercadoCampo(${i},'reguaJanela',this.value)" title="Quantos dos últimos resultados a régua considera (confiança/estabilidade)" style="width:64px;flex:none;background:var(--surface2);border:1px solid var(--purple-border);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:9px;border-radius:5px;">
+          <input type="text" inputmode="numeric" value="${m.reguaJanela!==undefined?m.reguaJanela:10}" oninput="digitandoMercadoCampo(${i},'reguaJanela',this.value)" onchange="editarMercadoCampo(${i},'reguaJanela',this.value)" title="Quantos dos últimos resultados a régua considera (confiança/estabilidade)" style="width:64px;flex:none;background:var(--surface2);border:1px solid var(--purple-border);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:9px;border-radius:5px;">
         </div>
         <div style="display:flex;align-items:center;gap:5px;flex:none;">
           <span style="font-size:10px;color:var(--muted);white-space:nowrap;">Sensib.</span>
-          <input type="text" inputmode="numeric" value="${m.reguaSensibilidade!==undefined?m.reguaSensibilidade:5}" oninput="editarMercadoCampo(${i},'reguaSensibilidade',this.value)" title="Com quantos resultados reais a régua já reage em força total (velocidade de reação, sempre ≤ Janela)" style="width:64px;flex:none;background:var(--surface2);border:1px solid var(--bar-amber);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:9px;border-radius:5px;">
+          <input type="text" inputmode="numeric" value="${m.reguaSensibilidade!==undefined?m.reguaSensibilidade:5}" oninput="digitandoMercadoCampo(${i},'reguaSensibilidade',this.value)" onchange="editarMercadoCampo(${i},'reguaSensibilidade',this.value)" title="Com quantos resultados reais a régua já reage em força total (velocidade de reação, sempre ≤ Janela)" style="width:64px;flex:none;background:var(--surface2);border:1px solid var(--bar-amber);color:var(--text);font-family:var(--mono);font-size:16px;font-weight:700;padding:9px;border-radius:5px;">
         </div>
-        <span style="font-size:9px;color:var(--muted);flex:none;white-space:nowrap;">incremento: ${(incrBase*0.5).toFixed(1)}%–${(incrBase*1.5).toFixed(1)}%</span>`:''}
+        <span id="resumo-regua-${i}" style="font-size:9px;color:var(--muted);flex:none;white-space:nowrap;">incremento: ${(incrBase*0.5).toFixed(1)}%–${(incrBase*1.5).toFixed(1)}%</span>`:''}
       </div>
       ${nenhum?'<div style="font-size:10px;color:var(--bar-amber);font-weight:700;margin-top:6px;">⚠️ nenhum marcado: aposta fixa, não cresce</div>':''}
     </div>`;
@@ -2320,6 +2320,38 @@ function _numBR(valor){
   // aceita "1,82" e "1.82" — troca vírgula por ponto antes de converter
   return parseFloat(String(valor).replace(',','.'));
 }
+
+/* Enquanto o usuário DIGITA: grava o que dá para gravar, sem aplicar valor padrão
+   e sem redesenhar a tela. Campo vazio ou incompleto ("0," "1." "-") é estado de
+   digitação legítimo — não é erro. Nada de default aqui, senão o número reaparece
+   sozinho e o cursor pula. */
+function digitandoMercadoCampo(i,campo,valor){
+  const l=_garantirEdit();
+  if(!l[i]) return;
+  const bruto=String(valor).trim();
+  if(bruto===''||bruto===','||bruto==='.'||bruto==='-') return; // deixa o campo em paz
+  const n=_numBR(bruto);
+  if(isNaN(n)) return;
+  if(campo==='reguaJanela'||campo==='reguaSensibilidade'){
+    const inteiro=parseInt(bruto); if(isNaN(inteiro)) return;
+    l[i][campo]=inteiro;
+  } else {
+    l[i][campo]=n;
+  }
+  atualizarResumoReguaLinha(i);
+}
+
+/* Atualiza só o textinho "incremento: X%–Y%" da linha, sem redesenhar o editor.
+   É o que permite digitar no Incr.% sem o campo se apagar sozinho. */
+function atualizarResumoReguaLinha(i){
+  const el=document.getElementById('resumo-regua-'+i); if(!el) return;
+  const l=_garantirEdit(); if(!l[i]) return;
+  const base=parseFloat(l[i].incrPct); if(isNaN(base)) return;
+  el.innerText='incremento: '+(base*0.5).toFixed(1)+'%–'+(base*1.5).toFixed(1)+'%';
+}
+
+/* Ao SAIR do campo (blur/change): agora sim normaliza, aplica mínimos e
+   redesenha, para o resumo da Régua e os avisos ficarem coerentes. */
 function editarMercadoCampo(i,campo,valor){
   const l=_garantirEdit();
   if(!l[i]) return;
